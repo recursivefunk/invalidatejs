@@ -1,0 +1,23 @@
+{
+  "name": "invalidatejs",
+  "version": "0.0.0",
+  "description": "Sends an invalidation request to your AWS Cloudfront Distribution",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "aws",
+    "cloudfront",
+    "invalidation",
+    "request",
+    "amazon"
+  ],
+  "author": "Johnny Ray Austin",
+  "license": "BSD",
+  "dependencies": {
+    "request": "~2.10.0",
+    "sf": "~0.1.3",
+    "libxml-to-js": "~0.3.10"
+  }
+}
