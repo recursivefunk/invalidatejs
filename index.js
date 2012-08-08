@@ -8,7 +8,7 @@ var util = require('util');
 var request = require('request');
 var crypto = require('crypto');
 var sf = require('sf');
-var protocol = 'https://';
+var builder = require('xmlbuilder');
 var aws_host = 'cloudfront.amazonaws.com';
 var required = ['secret_key', 'access_key', 'dist', 'resourcePaths'];
 
@@ -18,13 +18,15 @@ module.exports = function invalidate(opts, callback) {
     return callback(new Error('Missing the following required config itmes ' + util.inspect(missing)));
   } else {
     var requestToSend = buildRequest(opts);
-
     request.post(requestToSend, function (err, resp, body) {
       if (err) {
         return callback(err);
       }
 
       parser(body, function (error, result) {
+        if (result.Error) {
+          error = error || new Error(result.Error.message);
+        }
         return callback(error, resp.statusCode, result);
       });
     });
@@ -42,23 +44,26 @@ function checkRequired(opts) {
 }
 
 function buildRequest(opts) {
-  var resources = buildXmlResourcePaths(opts.resourcePaths);
-  var str = '<InvalidationBatch>';
+  var resources = opts.resourcePaths;
+  var doc = builder.create();
+  var batch = doc.begin('InvalidationBatch');
+  var body;
   var headers;
 
   resources.forEach(function (r) {
-    str += r;
+    batch.ele('Path', {}, r);
   });
 
-  str += sf('<CallerReference>{0}{1}</CallerReference>', opts.dist, Date.now());
-  str += '</InvalidationBatch>';
-  headers = fetchHeaders(opts, str.length);
-  var endpoint = sf('{0}{1}/2010-11-01/distribution/{2}/invalidation', protocol, aws_host, opts.dist);
+  batch.ele('CallerReference', {} , opts.dist + Date.now());
+  body = doc.toString('utf8');
+  headers = fetchHeaders(opts, body.length);
+  var endpoint = 
+    sf('https://{0}/2010-11-01/distribution/{1}/invalidation', aws_host, opts.dist);
 
   return {
     uri: endpoint,
     headers: headers,
-    body: str
+    body: body
   };
 }
 
@@ -70,23 +75,15 @@ function fetchHeaders(opts, contentLength) {
     .update(date, 'utf8')
     .digest('binary');
   var b64 = new Buffer(hash, 'binary').toString('base64');
-  var auth = sf('AWS ' + opts.access_key + ':' + b64);
+  var auth = 'AWS ' + opts.access_key + ':' + b64;
 
   return {
-    'Host': 'cloudfront.amazonaws.com',
+    'Host': aws_host,
     'Method': 'POST',
     'Date': date,
     'x-amz-date': date,
     'Content-Type': 'text/xml; charset=UTF-8',
     'Authorization': auth,
-    'Content-Length': sf('{0}', contentLength)
+    'Content-Length': contentLength
   };
-}
-
-function buildXmlResourcePaths (resourcePaths) {
-  var paths = [];
-  resourcePaths.forEach(function (_path) {
-    paths.push( sf('<Path>{0}</Path>', _path) );
-  });
-  return paths;
 }
