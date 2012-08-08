@@ -1,10 +1,14 @@
 {
   "name": "invalidatejs",
-  "version": "0.0.0",
+  "version": "0.5.0",
   "description": "Sends an invalidation request to your AWS Cloudfront Distribution",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": ""
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Johnny-Ray/invalidatejs.git"
   },
   "keywords": [
     "aws",
@@ -13,7 +17,7 @@
     "request",
     "amazon"
   ],
-  "author": "Johnny Ray Austin",
+  "author": "Johnny Ray Austin <johnny@johnnyray.me>",
   "license": "BSD",
   "dependencies": {
     "request": "~2.10.0",
