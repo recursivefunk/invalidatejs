@@ -20,22 +20,22 @@ vows.describe('Invalidator').addBatch({
         var config = JSON.parse(file);
 
         invalidate(config, function (err, statusCode, body) {
-          promise.emit('success', err, statusCode, body);
+          promise.emit('success', {err:err, statusCode:statusCode, body:body});
         });
         return promise;
       },
 
-      'no error occured': function (err, statusCode, body) {
-        assert.isNull(err);
+      'no error occured': function (obj) {
+        assert.isNull(obj.err);
       },
 
-      'status code is correct': function (err, statusCode, body) {
-        assert.equal(statusCode, 201);
+      'status code is correct': function (obj) {
+        assert.equal(obj.statusCode, 201);
       },
 
-      'response indicates invalidation in progress': function (err, statusCode, body) {
-        assert.equal(body.Status, 'InProgress');
-        assert.isNotNull(body.Id);
+      'response indicates invalidation in progress': function (obj) {
+        assert.equal(obj.body.Status, 'InProgress');
+        assert.isNotNull(obj.body.Id);
       }
     }
   }
