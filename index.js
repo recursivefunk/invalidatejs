@@ -2,7 +2,7 @@
 
 /*global require:false module:false Buffer:false console:false*/
 
-var request = require('npm');
+
 var parser = require('libxml-to-js');
 var util = require('util');
 var request = require('request');
