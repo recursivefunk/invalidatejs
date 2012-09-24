@@ -11,9 +11,9 @@ var sf = require('sf');
 var builder = require('xmlbuilder');
 var aws_host = 'cloudfront.amazonaws.com';
 var required = {
-  'secret_key': 'string', 
-  'access_key': 'string', 
-  'dist': 'string', 
+  'secret_key': 'string',
+  'access_key': 'string',
+  'dist': 'string',
   'resourcePaths': 'object'
 };
 
@@ -80,7 +80,7 @@ function buildRequest(opts) {
   batch.ele('CallerReference', {} , opts.dist + Date.now());
   body = doc.toString('utf8');
   headers = fetchHeaders(opts, body.length);
-  var endpoint = 
+  var endpoint =
     sf('https://{0}/2010-11-01/distribution/{1}/invalidation', aws_host, opts.dist);
 
   return {
@@ -95,7 +95,7 @@ function fetchHeaders(opts, contentLength) {
     console.log('Setting headers');
   }
   var date = new Date().toGMTString();
-  var hash = 
+  var hash =
       crypto
       .createHmac('sha1', opts.secret_key)
       .update(date, 'utf8')
