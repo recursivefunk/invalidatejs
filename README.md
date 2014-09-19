@@ -1,3 +1,5 @@
+## No longer maintained. Other modules handle this and much more
+
 # invalidatejs
 
 ## Sends invalidation requests to Amazon's CloudFront Service
